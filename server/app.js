@@ -5,6 +5,8 @@ var bodyParser = require( 'body-parser' );
 var urlEncodedParser = bodyParser.urlencoded( { extended: false } );
 var port = process.env.PORT || 8080;
 
+var events = [];
+
 app.listen( port, function( req, res ){
   console.log( 'server listening on', port );
 }); // end spin up server
@@ -15,28 +17,16 @@ app.get( '/', function( req, res ){
   res.sendFile( path.resolve( 'views/index.html' ) );
 }); // end base url
 
-// testGet
-app.get( '/testGet', function( req, res ){
-  console.log( 'testGet url hit' );
-  // do work here
-  // assemble object to return
-  var objectToReturn = {
-    field0: 'I came from testGet on server'
-  }; // end object to return
-  // return objectToReturn
-  res.send( objectToReturn );
-}); // end testGet
 
 // testPost
 app.post( '/testPost', urlEncodedParser, function( req, res ){
   console.log( 'testPost url hit. req.body:', req.body );
-  // do work here
+  events.push(req.body);
+  console.log('events: ', events);
   // assemble object to return
-  var objectToReturn = {
-    field0: 'I came from testPost on server'
-  }; // end object to return
+  var objectToReturn;
   // return objectToReturn
-  res.send( objectToReturn );
+  res.send( events );
 }); // end testPost
 
 // static folder
