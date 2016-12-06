@@ -1,4 +1,4 @@
-<forked from Group project>
+//forked from Group project//
 
 JEN Stack Template
 ==================
