@@ -17,6 +17,20 @@ app.get( '/', function( req, res ){
   res.sendFile( path.resolve( 'views/index.html' ) );
 }); // end base url
 
+app.get('/unfilter', function(req, res) {
+    res.send(events);
+});
+// filterAthlet post
+app.post('/filter', urlEncodedParser, function( req, res ){
+    console.log('req.body', req.body);
+    var filtered = [];
+    for (var i = 0; i < events.length; i++) {
+        if (events[i].athleteName.toLowerCase() === req.body.name.toLowerCase()){
+            filtered.push(events[i]);
+        } // end if
+    } // end for
+    res.send( filtered );
+});//end filterAthlet
 
 // testPost
 app.post( '/testPost', urlEncodedParser, function( req, res ){

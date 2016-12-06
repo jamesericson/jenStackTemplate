@@ -4,6 +4,7 @@ var events = [];
 
 $(document).ready(function() {
     console.log('JQ');
+    $('#unfilterButton').hide();
 
     // test get function
     var getData = function() {
@@ -24,6 +25,7 @@ $(document).ready(function() {
     // test get function
     var postData = function() {
         console.log('in postData');
+
         var eventName = $('#eventName').val();
         var athleteName = $('#athleteName').val();
         var awardGiven = $('#awardGiven').val();
@@ -65,10 +67,41 @@ $(document).ready(function() {
         displayOnDom(events);
     }) //end sortButton event
 
+    $('#unfilterButton').on('click', function(){
+        $('#unfilterButton').hide();
+        $.ajax({
+            type: 'GET',
+            url: '/unfilter',
+            success: function(response) {
+                events = response;
+                displayOnDom(response);
+            }
+        })
+    });//end unfilterButton click
+
+    $(document).on('click', '.athlete', function(){
+        $('#unfilterButton').show();
+        var athleteName = $(this).data();
+
+        $.ajax({
+            type: 'POST',
+            url: '/filter',
+            data: athleteName,
+            success: function(response){
+                console.log('Response from filter: ', response);
+                events = response;
+                displayOnDom(response);
+            },
+            error: function() {
+                console.log('error with ajax call...');
+            }
+        }) // end ajax
+    }) //end athlete click
+
     function displayOnDom(array) {
         var outputText = "";
         for (var i = 0; i < array.length; i++) {
-            outputText += "<h2>" + array[i].athleteName + "</h2>";
+            outputText += "<h2 class='athlete' data-name='" + array[i].athleteName + "'>" + array[i].athleteName + "</h2>";
             outputText += "<p>" + array[i].eventName + "</p>";
             outputText += "<p>" + array[i].awardGiven + "</p>";
         }
