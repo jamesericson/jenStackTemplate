@@ -1,5 +1,7 @@
 console.log('genero sourced');
 
+var events = [];
+
 $(document).ready(function() {
     console.log('JQ');
 
@@ -34,6 +36,7 @@ $(document).ready(function() {
             data: thisAward,
             success: function(response) {
                 console.log('back from post call:', response);
+                events = response;
                 displayOnDom(response);
             },
             error: function() {
@@ -49,7 +52,20 @@ $(document).ready(function() {
         postData();
     }); // end testGetButton
 
-    function displayOnDom (array){
+    $('#sortButton').on('click', function() {
+        events.sort(function(a, b) {
+            var nameA = a.eventName.toLowerCase(),
+                nameB = b.eventName.toLowerCase();
+            if (nameA < nameB) //sort string ascending
+                return -1;
+            if (nameA > nameB)
+                return 1;
+            return 0; //default return value (no sorting)
+        });
+        displayOnDom(events);
+    }) //end sortButton event
+
+    function displayOnDom(array) {
         var outputText = "";
         for (var i = 0; i < array.length; i++) {
             outputText += "<h2>" + array[i].athleteName + "</h2>";
@@ -57,7 +73,7 @@ $(document).ready(function() {
             outputText += "<p>" + array[i].awardGiven + "</p>";
         }
         $('.output-div').html(outputText);
-    }
+    } // end displayOnDom
 
 
 }); //end doc ready
