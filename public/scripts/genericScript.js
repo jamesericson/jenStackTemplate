@@ -3,41 +3,24 @@ console.log('genero sourced');
 var events = [];
 
 $(document).ready(function() {
-    console.log('JQ');
+    // Hide the unfilter button until the user filters data
     $('#unfilterButton').hide();
 
     // test get function
-    var getData = function() {
-        console.log('in getData');
-        $.ajax({
-            type: 'GET',
-            url: '/testGet',
-            success: function(response) {
-                console.log('back from get call:', response);
-                $('.output-div').append('<p>Response: ' + response.field0 + '</p>');
-            },
-            error: function() {
-                console.log('error with ajax call...');
-            }
-        });
-    }; // end getData
-
-    // test get function
     var postData = function() {
-        console.log('in postData');
-
+        // Get user data
         var eventName = $('#eventName').val();
         var athleteName = $('#athleteName').val();
         var awardGiven = $('#awardGiven').val();
-
+        // Build a new award object
         var thisAward = new Award(eventName, athleteName, awardGiven);
-
+        // Post the award to the server
         $.ajax({
             type: 'POST',
             url: '/testPost',
             data: thisAward,
             success: function(response) {
-                console.log('back from post call:', response);
+                // Display the returned events
                 events = response;
                 displayOnDom(response);
             },
@@ -47,14 +30,12 @@ $(document).ready(function() {
         });
     }; // end getData
 
-    /// - buttons to test - ///
-
     $('#testPostButton').on('click', function() {
-        console.log('in testPostButton on click');
         postData();
     }); // end testGetButton
 
     $('#sortButton').on('click', function() {
+        // Sort events by event name (case insensitive)
         events.sort(function(a, b) {
             var nameA = a.eventName.toLowerCase(),
                 nameB = b.eventName.toLowerCase();
@@ -65,7 +46,7 @@ $(document).ready(function() {
             return 0; //default return value (no sorting)
         });
         displayOnDom(events);
-    }) //end sortButton event
+    }); //end sortButton event
 
     $('#unfilterButton').on('click', function(){
         $('#unfilterButton').hide();
@@ -76,7 +57,7 @@ $(document).ready(function() {
                 events = response;
                 displayOnDom(response);
             }
-        })
+        });
     });//end unfilterButton click
 
     $(document).on('click', '.athlete', function(){
@@ -95,22 +76,25 @@ $(document).ready(function() {
             error: function() {
                 console.log('error with ajax call...');
             }
-        }) // end ajax
-    }) //end athlete click
+        }); // end ajax
+    }); //end athlete click
 
     function displayOnDom(array) {
         var outputText = "";
+        // Loop through array and create elements
         for (var i = 0; i < array.length; i++) {
             outputText += "<h2 class='athlete' data-name='" + array[i].athleteName + "'>" + array[i].athleteName + "</h2>";
             outputText += "<p>" + array[i].eventName + "</p>";
             outputText += "<p>" + array[i].awardGiven + "</p>";
         }
+        // Append elements to the DOM
         $('.output-div').html(outputText);
     } // end displayOnDom
 
 
 }); //end doc ready
 
+// Award constructor
 function Award(eventName, athleteName, awardGiven) {
     this.eventName = eventName;
     this.athleteName = athleteName;
