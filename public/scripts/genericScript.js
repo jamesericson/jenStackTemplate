@@ -5,31 +5,11 @@ var events = [];
 $(document).ready(function() {
     // Hide the unfilter button until the user filters data
     $('#unfilterButton').hide();
+    // Add event handlers
+    enable();
+}); //end doc ready
 
-    // test get function
-    var postData = function() {
-        // Get user data
-        var eventName = $('#eventName').val();
-        var athleteName = $('#athleteName').val();
-        var awardGiven = $('#awardGiven').val();
-        // Build a new award object
-        var thisAward = new Award(eventName, athleteName, awardGiven);
-        // Post the award to the server
-        $.ajax({
-            type: 'POST',
-            url: '/testPost',
-            data: thisAward,
-            success: function(response) {
-                // Display the returned events
-                events = response;
-                displayOnDom(response);
-            },
-            error: function() {
-                console.log('error with ajax call...');
-            }
-        });
-    }; // end getData
-
+function enable() {
     $('#testPostButton').on('click', function() {
         postData();
     }); // end testGetButton
@@ -48,19 +28,7 @@ $(document).ready(function() {
         displayOnDom(events);
     }); //end sortButton event
 
-    $('#unfilterButton').on('click', function(){
-        $('#unfilterButton').hide();
-        $.ajax({
-            type: 'GET',
-            url: '/unfilter',
-            success: function(response) {
-                events = response;
-                displayOnDom(response);
-            }
-        });
-    });//end unfilterButton click
-
-    $(document).on('click', '.athlete', function(){
+    $(document).on('click', '.athlete', function() {
         $('#unfilterButton').show();
         var athleteName = $(this).data();
 
@@ -68,7 +36,7 @@ $(document).ready(function() {
             type: 'POST',
             url: '/filter',
             data: athleteName,
-            success: function(response){
+            success: function(response) {
                 console.log('Response from filter: ', response);
                 events = response;
                 displayOnDom(response);
@@ -79,20 +47,18 @@ $(document).ready(function() {
         }); // end ajax
     }); //end athlete click
 
-    function displayOnDom(array) {
-        var outputText = "";
-        // Loop through array and create elements
-        for (var i = 0; i < array.length; i++) {
-            outputText += "<h2 class='athlete' data-name='" + array[i].athleteName + "'>" + array[i].athleteName + "</h2>";
-            outputText += "<p>" + array[i].eventName + "</p>";
-            outputText += "<p>" + array[i].awardGiven + "</p>";
-        }
-        // Append elements to the DOM
-        $('.output-div').html(outputText);
-    } // end displayOnDom
-
-
-}); //end doc ready
+    $('#unfilterButton').on('click', function() {
+        $('#unfilterButton').hide();
+        $.ajax({
+            type: 'GET',
+            url: '/unfilter',
+            success: function(response) {
+                events = response;
+                displayOnDom(response);
+            }
+        });
+    }); //end unfilterButton click
+}
 
 // Award constructor
 function Award(eventName, athleteName, awardGiven) {
@@ -100,3 +66,38 @@ function Award(eventName, athleteName, awardGiven) {
     this.athleteName = athleteName;
     this.awardGiven = awardGiven;
 }
+
+var postData = function() {
+    // Get user data
+    var eventName = $('#eventName').val();
+    var athleteName = $('#athleteName').val();
+    var awardGiven = $('#awardGiven').val();
+    // Build a new award object
+    var thisAward = new Award(eventName, athleteName, awardGiven);
+    // Post the award to the server
+    $.ajax({
+        type: 'POST',
+        url: '/testPost',
+        data: thisAward,
+        success: function(response) {
+            // Display the returned events
+            events = response;
+            displayOnDom(response);
+        },
+        error: function() {
+            console.log('error with ajax call...');
+        }
+    });
+}; // end postData
+
+function displayOnDom(array) {
+    var outputText = "";
+    // Loop through array and create elements
+    for (var i = 0; i < array.length; i++) {
+        outputText += "<h2 class='athlete' data-name='" + array[i].athleteName + "'>" + array[i].athleteName + "</h2>";
+        outputText += "<p>" + array[i].eventName + "</p>";
+        outputText += "<p>" + array[i].awardGiven + "</p>";
+    }
+    // Append elements to the DOM
+    $('.output-div').html(outputText);
+} // end displayOnDom
