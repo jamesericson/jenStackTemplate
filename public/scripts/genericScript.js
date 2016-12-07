@@ -14,19 +14,8 @@ function enable() {
         postData();
     }); // end testGetButton
 
-    $('#sortButton').on('click', function() {
-        // Sort events by event name (case insensitive)
-        events.sort(function(a, b) {
-            var nameA = a.eventName.toLowerCase(),
-                nameB = b.eventName.toLowerCase();
-            if (nameA < nameB) //sort string ascending
-                return -1;
-            if (nameA > nameB)
-                return 1;
-            return 0; //default return value (no sorting)
-        });
-        displayOnDom(events);
-    }); //end sortButton event
+    $(document).on('click', '.sort', sort);
+
 
     $(document).on('click', '.athlete', function() {
         $('#unfilterButton').show();
@@ -91,13 +80,33 @@ var postData = function() {
 }; // end postData
 
 function displayOnDom(array) {
-    var outputText = "";
+    var outputText = '<table id="display-table"> ' +
+        '<thead><td><button type="button" class="sort" sortValue="athleteName" >Sort by Name</button></td>' +
+        '<td><button type="button" class ="sort" sortValue="eventName" >Sort by Event</button></td>' +
+        '<td><button type="button" class="sort" sortValue="awardGiven" >Sort by Award</button></td>';
     // Loop through array and create elements
+
     for (var i = 0; i < array.length; i++) {
-        outputText += "<h2 class='athlete' data-name='" + array[i].athleteName + "'>" + array[i].athleteName + "</h2>";
-        outputText += "<p>" + array[i].eventName + "</p>";
-        outputText += "<p>" + array[i].awardGiven + "</p>";
+        outputText += "<tr><td class='athlete' data-name='" + array[i].athleteName + "'>" + array[i].athleteName + "</td>";
+        outputText += "<td>" + array[i].eventName + "</td>";
+        outputText += "<td>" + array[i].awardGiven + "</td></tr>";
     }
+    outputText += "</table>";
     // Append elements to the DOM
     $('.output-div').html(outputText);
 } // end displayOnDom
+
+function sort(){
+  var sortValue = $(this).attr("sortValue");
+  console.log('the sort value is:' + sortValue);
+      events.sort(function(a, b) {
+          var nameA = a[sortValue].toLowerCase(),
+              nameB = b[sortValue].toLowerCase();
+          if (nameA < nameB) //sort string ascending
+              return -1;
+          if (nameA > nameB)
+              return 1;
+          return 0; //default return value (no sorting)
+      });
+      displayOnDom(events);
+}

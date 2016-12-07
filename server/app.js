@@ -7,7 +7,29 @@ var urlEncodedParser = bodyParser.urlencoded({
 });
 var port = process.env.PORT || 8080;
 
-var events = [];
+var events = [{
+        eventName: 'hackie sack',
+        athleteName: 'Dev',
+        awardGiven: 'champion'
+    }, {
+        eventName: 'pineapple ball',
+        athleteName: 'Bill Nye',
+        awardGiven: 'gold'
+    }, {
+        eventName: 'soccer',
+        athleteName: 'Dev',
+        awardGiven: 'participation trophy'
+    },{
+        eventName: 'soccer',
+        athleteName: 'Millie',
+        awardGiven: 'GOOOOOOLD'
+    },{
+        eventName: 'foosball',
+        athleteName: 'Danny',
+        awardGiven: 'zinc'
+    },
+
+];
 
 app.listen(port, function(req, res) {
     console.log('server listening on', port);
