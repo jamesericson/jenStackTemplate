@@ -1,5 +1,11 @@
 //forked from Group project//
 
+Project Overview:
+Completed as a group, this was assigned as a challenge to review the relationship between server logic and client logic. The template offered a divingboard into the challenge to which added input fields allowed the user to input data which was passed to the server and eventually back to the DOM. Input was sorted in a table formate and offered sortting buttons which would sort the given colomn alphabetically. An added feater also allowed the user to click an athlete's name and the table would be reduced to just data relating to that particular data. 
+
+Bellow is the discription of the given assignment: 
+
+
 JEN Stack Template
 ==================
 
