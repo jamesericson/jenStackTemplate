@@ -3,21 +3,22 @@
   <head>
     <meta charset="utf-8">
     <title>JEN Stack Example</title>
+    <link rel="stylesheet" href="css/style.css">
     <script src="vendors/jquery-3.0.0.min.js" charset="utf-8"></script>
     <script src="scripts/genericScript.js" charset="utf-8"></script>
   </head>
   <body>
     <h1>JEN Stack Example</h1>
+    <div class='inputClass'>
+      <input type="text" id="eventName" placeholder="Event Name">
+      <input type="text" id="athleteName" placeholder="Athlete Name">
+      <input type="text" id="awardGiven" placeholder="Award">
+      <button type="button" id="testPostButton">Submit Data</button>
+    </div>
 
-    <input type="text" id="eventName" placeholder="Event Name">
-    <input type="text" id="athleteName" placeholder="Athlete Name">
-    <input type="text" id="awardGiven" placeholder="Award">
-    <button type="button" id="testPostButton">Submit Data</button>
-
-    <br>
-    <button type="button" id="sortButton">Sort by Event</button>
-    <button type="button" id="unfilterButton">Show All</button>
-
-    <div class="output-div"></div>
+    <div class='outputClass'>
+      <div class="output-div"></div>
+      <button type="button" id="unfilterButton">Show All</button>
+    </div>
   </body>
 </html>

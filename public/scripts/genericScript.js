@@ -3,71 +3,40 @@ console.log('genero sourced');
 var events = [];
 
 $(document).ready(function() {
-    console.log('JQ');
+    // Hide the unfilter button until the user filters data
     $('#unfilterButton').hide();
+    // Add event handlers
+    enable();
+}); //end doc ready
 
-    // test get function
-    var getData = function() {
-        console.log('in getData');
-        $.ajax({
-            type: 'GET',
-            url: '/testGet',
-            success: function(response) {
-                console.log('back from get call:', response);
-                $('.output-div').append('<p>Response: ' + response.field0 + '</p>');
-            },
-            error: function() {
-                console.log('error with ajax call...');
-            }
-        });
-    }; // end getData
+function enable() {
+    $('#testPostButton').on('click', function() {
+        postData();
+    }); // end testGetButton
 
-    // test get function
-    var postData = function() {
-        console.log('in postData');
+    $(document).on('click', '.sort', sort);
 
-        var eventName = $('#eventName').val();
-        var athleteName = $('#athleteName').val();
-        var awardGiven = $('#awardGiven').val();
 
-        var thisAward = new Award(eventName, athleteName, awardGiven);
+    $(document).on('click', '.athlete', function() {
+        $('#unfilterButton').show();
+        var athleteName = $(this).data();
 
         $.ajax({
             type: 'POST',
-            url: '/testPost',
-            data: thisAward,
+            url: '/filter',
+            data: athleteName,
             success: function(response) {
-                console.log('back from post call:', response);
+                console.log('Response from filter: ', response);
                 events = response;
                 displayOnDom(response);
             },
             error: function() {
                 console.log('error with ajax call...');
             }
-        });
-    }; // end getData
+        }); // end ajax
+    }); //end athlete click
 
-    /// - buttons to test - ///
-
-    $('#testPostButton').on('click', function() {
-        console.log('in testPostButton on click');
-        postData();
-    }); // end testGetButton
-
-    $('#sortButton').on('click', function() {
-        events.sort(function(a, b) {
-            var nameA = a.eventName.toLowerCase(),
-                nameB = b.eventName.toLowerCase();
-            if (nameA < nameB) //sort string ascending
-                return -1;
-            if (nameA > nameB)
-                return 1;
-            return 0; //default return value (no sorting)
-        });
-        displayOnDom(events);
-    }) //end sortButton event
-
-    $('#unfilterButton').on('click', function(){
+    $('#unfilterButton').on('click', function() {
         $('#unfilterButton').hide();
         $.ajax({
             type: 'GET',
@@ -76,43 +45,68 @@ $(document).ready(function() {
                 events = response;
                 displayOnDom(response);
             }
-        })
-    });//end unfilterButton click
+        });
+    }); //end unfilterButton click
+}
 
-    $(document).on('click', '.athlete', function(){
-        $('#unfilterButton').show();
-        var athleteName = $(this).data();
-
-        $.ajax({
-            type: 'POST',
-            url: '/filter',
-            data: athleteName,
-            success: function(response){
-                console.log('Response from filter: ', response);
-                events = response;
-                displayOnDom(response);
-            },
-            error: function() {
-                console.log('error with ajax call...');
-            }
-        }) // end ajax
-    }) //end athlete click
-
-    function displayOnDom(array) {
-        var outputText = "";
-        for (var i = 0; i < array.length; i++) {
-            outputText += "<h2 class='athlete' data-name='" + array[i].athleteName + "'>" + array[i].athleteName + "</h2>";
-            outputText += "<p>" + array[i].eventName + "</p>";
-            outputText += "<p>" + array[i].awardGiven + "</p>";
-        }
-        $('.output-div').html(outputText);
-    } // end displayOnDom
-
-
-}); //end doc ready
-
+// Award constructor
 function Award(eventName, athleteName, awardGiven) {
     this.eventName = eventName;
     this.athleteName = athleteName;
     this.awardGiven = awardGiven;
+}
+
+var postData = function() {
+    // Get user data
+    var eventName = $('#eventName').val();
+    var athleteName = $('#athleteName').val();
+    var awardGiven = $('#awardGiven').val();
+    // Build a new award object
+    var thisAward = new Award(eventName, athleteName, awardGiven);
+    // Post the award to the server
+    $.ajax({
+        type: 'POST',
+        url: '/testPost',
+        data: thisAward,
+        success: function(response) {
+            // Display the returned events
+            events = response;
+            displayOnDom(response);
+        },
+        error: function() {
+            console.log('error with ajax call...');
+        }
+    });
+}; // end postData
+
+function displayOnDom(array) {
+    var outputText = '<table id="display-table"> ' +
+        '<thead><td><button type="button" class="sort" sortValue="athleteName" >Sort by Name</button></td>' +
+        '<td><button type="button" class ="sort" sortValue="eventName" >Sort by Event</button></td>' +
+        '<td><button type="button" class="sort" sortValue="awardGiven" >Sort by Award</button></td>';
+    // Loop through array and create elements
+
+    for (var i = 0; i < array.length; i++) {
+        outputText += "<tr><td class='athlete' data-name='" + array[i].athleteName + "'>" + array[i].athleteName + "</td>";
+        outputText += "<td>" + array[i].eventName + "</td>";
+        outputText += "<td>" + array[i].awardGiven + "</td></tr>";
+    }
+    outputText += "</table>";
+    // Append elements to the DOM
+    $('.output-div').html(outputText);
+} // end displayOnDom
+
+function sort(){
+  var sortValue = $(this).attr("sortValue");
+  console.log('the sort value is:' + sortValue);
+      events.sort(function(a, b) {
+          var nameA = a[sortValue].toLowerCase(),
+              nameB = b[sortValue].toLowerCase();
+          if (nameA < nameB) //sort string ascending
+              return -1;
+          if (nameA > nameB)
+              return 1;
+          return 0; //default return value (no sorting)
+      });
+      displayOnDom(events);
 }
